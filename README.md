@@ -16,7 +16,7 @@ Other features of Elm include:
 - Custom types & pattern matching, allows you to model problems clearly
 - Advanced tooling, such as the `time travel debugger`
 - Built in framework, known as the `Elm architecture` (aka. Model-View-Update pattern)
-- **Great error messages**, the compiler is the most helpful buddy ever
+- **Great error messages**
 
 ## When would I use Elm?
 
@@ -32,7 +32,10 @@ A quick look at the users of Elm includes names like Prezi, Pivotal (the tracker
 
 ## Drawbacks of Elm
 
-- Writing long HTML as functions feels a bit painful at first (but feels nicer when it is separated to small functions)
-- Largely a one-man-show with a BDFL (Benevolent dictator for life). Keeps things consistent but also locks the language up
+- Writing HTML as functions feels a bit painful at first (but feels nicer when it is separated to small functions)
+- Largely a one-man-show with a BDFL (benevolent dictator for life). Keeps things consistent but also locks the language up
 - Smallish community and package ecosystem, slow development cycles, limited tooling
 - Not popular, smaller pool of developers who already know Elm (although some can argue this makes it EASIER to make good hires)
+- Handling outside world resources like JSON via APIs takes a lot of work due to the safety requirements
+- More work & slower prototyping than most dynamic languages (but obviously the up-front work feels less cumbersome in large projects)
+- Powerful type system requires lots of thinking, sometimes it hurts my brain a lot :)
