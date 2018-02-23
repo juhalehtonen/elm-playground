@@ -4,7 +4,7 @@ This repo contains code and notes from my February 2018 learning day under the G
 
 ## The picshare app
 
-The main application code resides in the root here to create a GitHub Pages site from the Master branch. Other small scale tests are in `code/`. You can check out the thing in [https://juhalehtonen.github.io/elm-playground/](https://juhalehtonen.github.io/elm-playground/), compiled with the `--debug` flag to enable time travel debugging.
+The main application code resides in the root here to create a GitHub Pages site from the Master branch. Other small scale tests are in `code/`. You can check out the thing in [https://juhalehtonen.github.io/elm-playground/](https://juhalehtonen.github.io/elm-playground/), compiled with the `--debug` flag to enable time travel debugging (check it out too).
 
 Based on the excellent [Programming Elm](https://pragprog.com/book/jfelm/programming-elm) book. Compile with `elm make Picshare.elm --output picshare.js`
 
@@ -22,7 +22,9 @@ Other features of Elm include:
 - Custom types & pattern matching, allows you to model problems clearly
 - Advanced tooling, such as the `time travel debugger`
 - Built in framework, known as the `Elm architecture` (aka. Model-View-Update pattern)
-- **Great error messages**
+- **Great error messages** (see below)
+
+![ErrorMessages](images/error_msgs.png)
 
 ## When would I use Elm?
 
