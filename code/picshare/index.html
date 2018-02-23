@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Picshare</title>
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+  <link rel="stylesheet" href="main.css">
+</head>
+<body>
+  
+  <!--
+  Here we load the Elm code manually, since we use a separate HTML file.
+
+  A compiled Elm application creates a global Elm namespace variable. The Elm
+  variable has properties for any top level modules you compiled. In this case,
+  it has a Picshare property.
+  -->
+  <div id="main" class="main"></div>
+
+  <script src="picshare.js"></script>
+  <script type="text/javascript">
+    Elm.Picshare.embed(document.getElementById('main'));
+  </script>
+
+</body>
+</html>
