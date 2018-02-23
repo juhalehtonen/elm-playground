@@ -6,7 +6,7 @@ This repo contains code and notes from my February 2018 learning day under the G
 
 Elm is a functional, statically typed programming language. It is first and foremost intended for producing web front-ends, and so it compiles down to HTML and JavaScript.
 
-What primarily makes Elm stand out from every other JS tool is that the compiler can guarantee **no runtime errors in practice**. While you can force the code to produce errors (e.g. by calling `Debug.crash`), in practice you should be able to be certain that if the code compiles, it will not run into errors in your browser.
+What primarily makes Elm stand out from every other JS tool is that the compiler guarantees **no runtime errors in practice**. While you can force the code to produce errors (e.g. by calling `Debug.crash`), in practice you should be able to be certain that if the code compiles, it will not run into errors in your browser.
 
 Other features of Elm include:
 - No `null` or `undefined`, everything has to be explicitly handled
@@ -28,5 +28,4 @@ A quick look at the users of Elm includes names like Pivotal (the tracker & othe
 
 - Writing long HTML as functions feels painful, but feels nicer when it is separated to functions
 - Largely a one-man-show with a BDFL (Benevolent dictator for life). Keeps things consistent but also locks the language up
-- JSON parsing, a very common task in everyday web apps, is quite annoying
-- Small community and package ecosystem, slow development cycles
+- Smallish community and package ecosystem, slow development cycles, limited tooling
