@@ -4,7 +4,7 @@ This repo contains code and notes from my February 2018 learning day under the G
 
 ## The picshare app
 
-The main application code resides in the root here to create a GitHub Pages site from the Master branch. Other small scale tests are in `code/`. You can check out the thing in https://juhalehtonen.github.io/elm-playground/
+The main application code resides in the root here to create a GitHub Pages site from the Master branch. Other small scale tests are in `code/`. You can check out the thing in [https://juhalehtonen.github.io/elm-playground/](https://juhalehtonen.github.io/elm-playground/), compiled with the `--debug` flag to enable time travel debugging.
 
 Based on the excellent [Programming Elm](https://pragprog.com/book/jfelm/programming-elm) book. Compile with `elm make Picshare.elm --output picshare.js`
 
