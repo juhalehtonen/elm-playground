@@ -138,7 +138,7 @@ type Msg
   | UpdateComment String
   | SaveComment
 
--- We use pattern matching on the newComment field of our model.
+-- Helper function used in our `update` function to save a new comment in our model
 saveNewComment : Model -> Model
 saveNewComment model =
   case model.newComment of
