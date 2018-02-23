@@ -12,8 +12,8 @@ module Picshare exposing (main)
 import Html exposing (..)
 -- The Html.Attributes module contains functions for adding attributes to virtual
 -- DOM nodes.
-import Html.Attributes exposing (class, src)
-import Html.Events exposing (onClick)
+import Html.Attributes exposing (class, disabled, placeholder, src, type_, value)
+import Html.Events exposing (onClick, onInput, onSubmit)
 
 -- Type aliases allow us to associate a type name with another type. One common
 -- example would be `type alias Id = Int` to call Integers Ids. Here we are
@@ -23,6 +23,8 @@ type alias Model =
   { url : String
   , caption : String
   , liked : Bool
+  , comments : List String
+  , newComment : String
   }
 
 -- Return a base URL for our photos
@@ -37,6 +39,8 @@ initialModel =
   { url = baseUrl ++ "800/600"
   , caption = "Stealing from Unsplash"
   , liked = False
+  , comments = [ "Amazing stuff!" ]
+  , newComment = ""
   }
 -- NOTE: Now that we have a type alias for our Model, we COULD also define our
 -- initialModel as: `Model (baseUrl ++ "800/600") "Stealing from Unsplash" False`
@@ -64,6 +68,43 @@ viewLoveButton model =
       []
     ]
 
+-- Single comment
+viewComment : String -> Html Msg
+viewComment comment =
+  li []
+    [ strong [] [ text "Comment:" ]
+    , text (" " ++ comment)
+    ]
+
+-- List of comments
+viewCommentList : List String -> Html Msg
+viewCommentList comments =
+  case comments of
+    [] ->
+      text ""
+    _ ->
+      div [ class "comments" ]
+        [ ul []
+          (List.map viewComment comments)
+        ]
+
+-- Showing and adding new comments
+viewComments : Model -> Html Msg
+viewComments model =
+  div []
+    [ viewCommentList model.comments
+    , form [ class "new-comment", onSubmit SaveComment ] -- Message on submit
+      [ input
+        [ type_ "text" -- The underscore here is to avoid the `type` keyword
+        , placeholder "Add a comment.."
+        , value model.newComment -- Lets the value reflect what is in the models newComment field
+        , onInput UpdateComment
+        ]
+        []
+      , button [disabled (String.isEmpty model.newComment)] [ text "Save" ] -- Disable button IF newComment field of our model is empty
+      ]
+    ]
+
 -- Create a single photo html representation from a model
 viewDetailedPhoto : Model -> Html Msg
 viewDetailedPhoto model =
@@ -72,6 +113,7 @@ viewDetailedPhoto model =
       , div [ class "photo-info" ]
         [ viewLoveButton model
         , h2 [ class "caption" ] [ text model.caption ]
+        , viewComments model
         ]
       ]
 
@@ -89,19 +131,26 @@ view model =
       ]
 
 {-
-Create our own union type that we can use for our Msg. Liking and unliking a
-photo is essentially toggling the value of the liked field between True and False,
-so instead of defining our Msg type as:
-
-type Msg
-  = Like
-  | Unlike
-
-we can do it as:
+Create our own union type that we can use for our Msg.
 -}
-
 type Msg
   = ToggleLike
+  | UpdateComment String
+  | SaveComment
+
+-- We use pattern matching on the newComment field of our model.
+saveNewComment : Model -> Model
+saveNewComment model =
+  case model.newComment of
+    "" ->
+      model
+
+    _ ->
+      let
+        comment =
+          String.trim model.newComment
+      in
+      {model | comments = model.comments ++ [ comment ], newComment = ""}
 
 -- All changes to the model in Elm has to happen in an `update` function.
 -- The update function takes two arguments, a `message` and a `model`.
@@ -113,7 +162,14 @@ type Msg
 update : Msg -> Model -> Model
 update msg model =
   case msg of
-    ToggleLike -> { model | liked = not model.liked } -- Toggle to the opposite on update
+    ToggleLike ->
+      { model | liked = not model.liked } -- Toggle to the opposite on update
+
+    UpdateComment comment ->
+      { model | newComment = comment }
+
+    SaveComment ->
+      saveNewComment model
 
 -- A `program` in Elm ties together the model, view function and update function.
 -- This is how Elm is able to subscribe to DOM events, dispatch messages to our

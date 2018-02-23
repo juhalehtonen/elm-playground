@@ -8260,23 +8260,171 @@ var _elm_lang$html$Html_Events$Options = F2(
 		return {stopPropagation: a, preventDefault: b};
 	});
 
-var _user$project$Picshare$update = F2(
-	function (msg, model) {
-		var _p0 = msg;
+var _user$project$Picshare$saveNewComment = function (model) {
+	var _p0 = model.newComment;
+	if (_p0 === '') {
+		return model;
+	} else {
+		var comment = _elm_lang$core$String$trim(model.newComment);
 		return _elm_lang$core$Native_Utils.update(
 			model,
-			{liked: !model.liked});
+			{
+				comments: A2(
+					_elm_lang$core$Basics_ops['++'],
+					model.comments,
+					{
+						ctor: '::',
+						_0: comment,
+						_1: {ctor: '[]'}
+					}),
+				newComment: ''
+			});
+	}
+};
+var _user$project$Picshare$update = F2(
+	function (msg, model) {
+		var _p1 = msg;
+		switch (_p1.ctor) {
+			case 'ToggleLike':
+				return _elm_lang$core$Native_Utils.update(
+					model,
+					{liked: !model.liked});
+			case 'UpdateComment':
+				return _elm_lang$core$Native_Utils.update(
+					model,
+					{newComment: _p1._0});
+			default:
+				return _user$project$Picshare$saveNewComment(model);
+		}
 	});
+var _user$project$Picshare$viewComment = function (comment) {
+	return A2(
+		_elm_lang$html$Html$li,
+		{ctor: '[]'},
+		{
+			ctor: '::',
+			_0: A2(
+				_elm_lang$html$Html$strong,
+				{ctor: '[]'},
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html$text('Comment:'),
+					_1: {ctor: '[]'}
+				}),
+			_1: {
+				ctor: '::',
+				_0: _elm_lang$html$Html$text(
+					A2(_elm_lang$core$Basics_ops['++'], ' ', comment)),
+				_1: {ctor: '[]'}
+			}
+		});
+};
+var _user$project$Picshare$viewCommentList = function (comments) {
+	var _p2 = comments;
+	if (_p2.ctor === '[]') {
+		return _elm_lang$html$Html$text('');
+	} else {
+		return A2(
+			_elm_lang$html$Html$div,
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$class('comments'),
+				_1: {ctor: '[]'}
+			},
+			{
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$ul,
+					{ctor: '[]'},
+					A2(_elm_lang$core$List$map, _user$project$Picshare$viewComment, comments)),
+				_1: {ctor: '[]'}
+			});
+	}
+};
 var _user$project$Picshare$baseUrl = 'https://unsplash.it/';
 var _user$project$Picshare$initialModel = {
 	url: A2(_elm_lang$core$Basics_ops['++'], _user$project$Picshare$baseUrl, '800/600'),
 	caption: 'Stealing from Unsplash',
-	liked: false
+	liked: false,
+	comments: {
+		ctor: '::',
+		_0: 'Amazing stuff!',
+		_1: {ctor: '[]'}
+	},
+	newComment: ''
 };
-var _user$project$Picshare$Model = F3(
-	function (a, b, c) {
-		return {url: a, caption: b, liked: c};
+var _user$project$Picshare$Model = F5(
+	function (a, b, c, d, e) {
+		return {url: a, caption: b, liked: c, comments: d, newComment: e};
 	});
+var _user$project$Picshare$SaveComment = {ctor: 'SaveComment'};
+var _user$project$Picshare$UpdateComment = function (a) {
+	return {ctor: 'UpdateComment', _0: a};
+};
+var _user$project$Picshare$viewComments = function (model) {
+	return A2(
+		_elm_lang$html$Html$div,
+		{ctor: '[]'},
+		{
+			ctor: '::',
+			_0: _user$project$Picshare$viewCommentList(model.comments),
+			_1: {
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$form,
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html_Attributes$class('new-comment'),
+						_1: {
+							ctor: '::',
+							_0: _elm_lang$html$Html_Events$onSubmit(_user$project$Picshare$SaveComment),
+							_1: {ctor: '[]'}
+						}
+					},
+					{
+						ctor: '::',
+						_0: A2(
+							_elm_lang$html$Html$input,
+							{
+								ctor: '::',
+								_0: _elm_lang$html$Html_Attributes$type_('text'),
+								_1: {
+									ctor: '::',
+									_0: _elm_lang$html$Html_Attributes$placeholder('Add a comment..'),
+									_1: {
+										ctor: '::',
+										_0: _elm_lang$html$Html_Attributes$value(model.newComment),
+										_1: {
+											ctor: '::',
+											_0: _elm_lang$html$Html_Events$onInput(_user$project$Picshare$UpdateComment),
+											_1: {ctor: '[]'}
+										}
+									}
+								}
+							},
+							{ctor: '[]'}),
+						_1: {
+							ctor: '::',
+							_0: A2(
+								_elm_lang$html$Html$button,
+								{
+									ctor: '::',
+									_0: _elm_lang$html$Html_Attributes$disabled(
+										_elm_lang$core$String$isEmpty(model.newComment)),
+									_1: {ctor: '[]'}
+								},
+								{
+									ctor: '::',
+									_0: _elm_lang$html$Html$text('Save'),
+									_1: {ctor: '[]'}
+								}),
+							_1: {ctor: '[]'}
+						}
+					}),
+				_1: {ctor: '[]'}
+			}
+		});
+};
 var _user$project$Picshare$ToggleLike = {ctor: 'ToggleLike'};
 var _user$project$Picshare$viewLoveButton = function (model) {
 	var buttonClass = model.liked ? 'fa-heart' : 'fa-heart-o';
@@ -8352,7 +8500,11 @@ var _user$project$Picshare$viewDetailedPhoto = function (model) {
 									_0: _elm_lang$html$Html$text(model.caption),
 									_1: {ctor: '[]'}
 								}),
-							_1: {ctor: '[]'}
+							_1: {
+								ctor: '::',
+								_0: _user$project$Picshare$viewComments(model),
+								_1: {ctor: '[]'}
+							}
 						}
 					}),
 				_1: {ctor: '[]'}
