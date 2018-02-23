@@ -2,6 +2,13 @@
 
 This repo contains code and notes from my February 2018 learning day under the GraphQL topic. A learning day is a day-a-month event here at [Evermade](https://www.evermade.fi) where each developer can pick a topic of their interest and spend a full day on learning the technology as they best see fit. The only requirement is that the developer produces enough notes and code to be able to share their learnings onwards to fellow developers and co-workers.
 
+## The picshare app
+
+The main application code resides in the root here to create a GitHub Pages site from the Master branch. Other small scale tests are in `code/`. 
+
+Based on the excellent [Programming Elm](https://pragprog.com/book/jfelm/programming-elm) book. Compile with `elm make Picshare.elm --output picshare.js`
+
+
 ## What is Elm?
 
 Elm is a functional, statically typed programming language. It is first and foremost intended for producing web front-ends, and so it compiles down to HTML and JavaScript.
