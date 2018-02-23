@@ -18,14 +18,21 @@ Other features of Elm include:
 - Built in framework, known as the `Elm architecture` (aka. Model-View-Update pattern)
 - **Great error messages**, the compiler is the most helpful buddy ever
 
-## Who uses Elm?
+## When would I use Elm?
 
-While powerful and solving real problems, Elm is not a very popular language. Some reasons for this could be a) that it is built with Haskell so being able to contribute back to the core requires Haskell knowledge, and b) it differs very much from almost every other language in the JavaScript ecosystem, so the initial learning takes longer.
+The most obvious reason to use Elm is if your project requires that the front-end has to be right and it must not crash. Elm is one of the few ways that you can use to make such guarantees and to feel at ease. Obviously this doesn't prevent logic errors by the programmer, but nothing really does.
 
-A quick look at the users of Elm includes names like Pivotal (the tracker & others), NoRedInk ([200 000+ lines of production Elm code with a single runtime error due to their own mishap](https://twitter.com/rtfeldman/status/961051166783213570)).
+Additionally, Elm makes it very easy to refactor code fearlessly due to the compile-time guarantees it provides. This means that Elm is also a very good choice for very large web applications that will see lots of iterations over a lifespan of years.
+
+## Who else uses Elm?
+
+While powerful and solving real problems, Elm is not a very popular language. Some reasons for this could be a) that it is built with Haskell so being able to contribute back to the core requires Haskell knowledge, and b) it differs very much from almost every other language in the JavaScript ecosystem, so the initial learning takes longer before developers are proficient at it. And, obviously, the lack of popularity then becomes an argument not to adopt it, further keeping it unpopular.
+
+A quick look at the users of Elm includes names like Prezi, Pivotal (the tracker & others), NoRedInk ([200 000+ lines of production Elm code with a single runtime error due to their own mishap](https://twitter.com/rtfeldman/status/961051166783213570)), and Futurice.
 
 ## Drawbacks of Elm
 
-- Writing long HTML as functions feels painful, but feels nicer when it is separated to functions
+- Writing long HTML as functions feels a bit painful at first (but feels nicer when it is separated to small functions)
 - Largely a one-man-show with a BDFL (Benevolent dictator for life). Keeps things consistent but also locks the language up
 - Smallish community and package ecosystem, slow development cycles, limited tooling
+- Not popular, smaller pool of developers who already know Elm (although some can argue this makes it EASIER to make good hires)
