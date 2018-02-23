@@ -38,35 +38,39 @@ initialModel =
   , caption = "Stealing from Unsplash"
   , liked = False
   }
+-- NOTE: Now that we have a type alias for our Model, we COULD also define our
+-- initialModel as: `Model (baseUrl ++ "800/600") "Stealing from Unsplash" False`
+-- but this can easily become kind of messy if our model was much larger. We
+-- can do this because Elm also has Type Constructors of the same name as our
+-- Type Alias.
 
 
--- Create a single photo html representation from a model
-viewDetailedPhoto : Model -> Html Msg
-viewDetailedPhoto model =
+-- Our lovebutton component
+viewLoveButton : Model -> Html Msg
+viewLoveButton model =
   let
     buttonClass =
       if model.liked then
         "fa-heart"
       else
         "fa-heart-o"
-
-    msg =
-      if model.liked then
-        Unlike
-      else
-        Like
   in
+  div [ class "like-button" ]
+    [ i
+      [ class "fa fa-2x"
+      , class buttonClass
+      , onClick ToggleLike
+      ]
+      []
+    ]
+
+-- Create a single photo html representation from a model
+viewDetailedPhoto : Model -> Html Msg
+viewDetailedPhoto model =
   div [ class "detailed-photo" ]
       [ img [src model.url] []
       , div [ class "photo-info" ]
-        [ div [ class "like-button" ]
-          [ i
-            [ class "fa fa-2x"
-            , class buttonClass
-            , onClick msg
-            ]
-            []
-          ]
+        [ viewLoveButton model
         , h2 [ class "caption" ] [ text model.caption ]
         ]
       ]
@@ -84,10 +88,20 @@ view model =
           ]
       ]
 
--- Create our own union type that we can use for our Msg
+{-
+Create our own union type that we can use for our Msg. Liking and unliking a
+photo is essentially toggling the value of the liked field between True and False,
+so instead of defining our Msg type as:
+
 type Msg
   = Like
   | Unlike
+
+we can do it as:
+-}
+
+type Msg
+  = ToggleLike
 
 -- All changes to the model in Elm has to happen in an `update` function.
 -- The update function takes two arguments, a `message` and a `model`.
@@ -99,11 +113,7 @@ type Msg
 update : Msg -> Model -> Model
 update msg model =
   case msg of
-    Like ->
-      { model | liked = True } -- each branch is an expression in Elm, so no need for `break`
-
-    Unlike ->
-      { model | liked = False } -- no need for default branch in Elm, as we know possible matches
+    ToggleLike -> { model | liked = not model.liked } -- Toggle to the opposite on update
 
 -- A `program` in Elm ties together the model, view function and update function.
 -- This is how Elm is able to subscribe to DOM events, dispatch messages to our
