@@ -47,5 +47,6 @@ A quick look at the users of Elm includes names like Prezi, Pivotal (the tracker
 - Smallish community and package ecosystem, slow development cycles, limited tooling
 - Not popular, smaller pool of developers who already know Elm (although some can argue this makes it EASIER to make good hires)
 - Handling outside world resources like JSON via APIs takes a lot of work due to the safety requirements
+- Interacting with third party JavaScript (not Elm) can be complicated due to safety requirements
 - More work & slower prototyping than most dynamic languages (but obviously the up-front work feels less cumbersome in large projects)
 - Powerful type system requires lots of thinking, sometimes it hurts my brain a lot :)
