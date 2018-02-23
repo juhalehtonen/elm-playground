@@ -14,9 +14,10 @@ import Html exposing (..)
 -- DOM nodes.
 import Html.Attributes exposing (class, disabled, placeholder, src, type_, value)
 import Html.Events exposing (onClick, onInput, onSubmit)
-import Json.Decode exposing (Decoder, bool, int, list, string)
+import Json.Decode exposing (Decoder, bool, decodeString, int, list, string)
 import Json.Decode.Pipeline exposing (decode, hardcoded, required)
 import Http
+import WebSocket
 
 -- Type aliases allow us to associate a type name with another type. One common
 -- example would be `type alias Id = Int` to call Integers Ids. Here we are
@@ -42,6 +43,7 @@ type alias Feed =
 type alias Model =
   { feed : Maybe Feed
   , error : Maybe Http.Error
+  , streamQueue : Feed
   }
 
 {- Our JSON decoder for our photos.
@@ -70,6 +72,11 @@ baseUrl : String
 baseUrl =
   "https://programming-elm.com/"
 
+-- Return base URL for websocket-based updates
+wsUrl : String
+wsUrl =
+  "wss://programming-elm.com/"
+
 -- Our initialModel is a Record (very much like JS objects).
 -- initialModel is a common pattern in Elm apps to define the initial state.
 -- Here we set initialModel photo to be Nothing, as we fetch it via an API later.
@@ -77,6 +84,7 @@ initialModel : Model
 initialModel =
   { feed = Nothing
   , error = Nothing
+  , streamQueue = []
   }
 
 -- The init constant is a `tuple`. The Elm architecture uses the `init` pair to
@@ -186,6 +194,22 @@ errorMessage error =
     _ ->
       """Sorry, we couldn't load your feed. Please try again later"""
 
+viewStreamNotification : Feed -> Html Msg
+viewStreamNotification queue =
+  case queue of
+    [] ->
+      text ""
+
+    _ ->
+      let
+        content = "View new photos: " ++ (toString (List.length queue))
+      in
+      div
+        [ class "stream-notification"
+        , onClick FlushStreamQueue
+        ]
+        [ text content ]
+
 -- Helper to display errors if they are present
 viewContent : Model -> Html Msg
 viewContent model =
@@ -195,7 +219,10 @@ viewContent model =
           [ text (errorMessage error) ]
 
     Nothing ->
-      viewFeed model.feed
+      div []
+          [ viewStreamNotification model.streamQueue
+          , viewFeed model.feed
+          ]
 
 -- Views in Elm are functions that take a model and return a virtual DOM tree
 -- `div` and other HTML functions take two lists: attributes and child nodes.
@@ -222,6 +249,8 @@ type Msg
   | UpdateComment Id String
   | SaveComment Id
   | LoadFeed (Result Http.Error Feed)
+  | LoadStreamPhoto (Result String Photo)
+  | FlushStreamQueue
 
 -- Helper function used in our `update` function to save a new comment in our model
 saveNewComment : Photo -> Photo
@@ -316,6 +345,22 @@ update msg model =
     LoadFeed (Err error) ->
       ( { model | error = Just error }, Cmd.none )
 
+    LoadStreamPhoto (Ok photo) ->
+      ( { model | streamQueue = photo :: model.streamQueue }
+      , Cmd.none
+      )
+
+    LoadStreamPhoto (Err _) ->
+      ( model, Cmd.none )
+
+    FlushStreamQueue ->
+      ( { model
+          | feed = Maybe.map ((++) model.streamQueue) model.feed
+          , streamQueue = []
+        }
+      , Cmd.none
+      )
+
 {- This subscriptions doesn't really do anything now, but we need this no-op
 implementation for now to create the correct type of record that Html.program
 requires.
@@ -324,10 +369,33 @@ Briefly, the subscriptions function takes the model as an argument and needs to
 return a Sub msg type. We will eventually return Sub Msg, so we use that in our
 type signature. For now, we use Sub.none to return a no-op subscription (much
 like how Cmd.none returns a command that does nothing).
+
+Subscriptions differ from commands in that commands tell Elm architecture to do
+something to the outside world while subscriptions tell the Elm architecture to
+receive information from the outside world. The Elm architecture will listen for
+events related to subscriptions and notify our applications update function with
+whatever message type constructor we provide at subscription time. In this case,
+WebSocket.listen expects the message type constructor to take a string argument,
+which will become the raw string data from a WebSocket event.
 -}
 subscriptions : Model -> Sub Msg
 subscriptions model =
-  Sub.none
+  case model.feed of
+    -- << is a 'function compositor operator'. It chains together two other functions.
+    -- The argument to the composed function is passed into the first function in the chain.
+    -- The first functions return value then becomes the argument to the next function in the chain.
+    -- Here we use function composition to create a function that takes a string argument
+    -- and decodes it into a Result String Photo. Then, the function passes the
+    -- result into LoadStreamPhoto to create a message.
+    -- Alternatively, this could be expressed with an anonymous function as:
+    --  WebSocket.listen wsUrl (\json -> LoadStreamPhoto (decodeString photoDecoder json))
+    Just _ ->
+      WebSocket.listen wsUrl
+        (LoadStreamPhoto << (decodeString photoDecoder))
+
+    Nothing ->
+      Sub.none
+
 
 -- A `program` in Elm ties together the model, view function and update function.
 -- This is how Elm is able to subscribe to DOM events, dispatch messages to our
