@@ -34,10 +34,14 @@ type alias Photo =
   , newComment : String
   }
 
+type alias Feed =
+  List Photo
+
 -- Maybe represents a value that may or may not exist. If it does, then it has Just
 -- that value. If it does not exist, we have Nothing.
 type alias Model =
-  { photo : Maybe Photo
+  { feed : Maybe Feed
+  , error : Maybe Http.Error
   }
 
 {- Our JSON decoder for our photos.
@@ -71,7 +75,8 @@ baseUrl =
 -- Here we set initialModel photo to be Nothing, as we fetch it via an API later.
 initialModel : Model
 initialModel =
-  { photo = Nothing
+  { feed = Nothing
+  , error = Nothing
   }
 
 -- The init constant is a `tuple`. The Elm architecture uses the `init` pair to
@@ -89,15 +94,15 @@ init =
 -- actions such as sending HTTP requests.
 fetchFeed : Cmd Msg
 fetchFeed =
-  Http.get (baseUrl ++ "feed/1") photoDecoder
+  Http.get (baseUrl ++ "feed") (list photoDecoder)
     |> Http.send LoadFeed -- NOTE: Does not actually _send_ the request, instead it returns a Cmd to do so
 
 -- Our lovebutton component
 viewLoveButton : Photo -> Html Msg
-viewLoveButton model =
+viewLoveButton photo =
   let
     buttonClass =
-      if model.liked then
+      if photo.liked then
         "fa-heart"
       else
         "fa-heart-o"
@@ -106,7 +111,7 @@ viewLoveButton model =
     [ i
       [ class "fa fa-2x"
       , class buttonClass
-      , onClick ToggleLike
+      , onClick (ToggleLike photo.id)
       ]
       []
     ]
@@ -133,18 +138,18 @@ viewCommentList comments =
 
 -- Showing and adding new comments
 viewComments : Photo -> Html Msg
-viewComments model =
+viewComments photo =
   div []
-    [ viewCommentList model.comments
-    , form [ class "new-comment", onSubmit SaveComment ] -- Message on submit
+    [ viewCommentList photo.comments
+    , form [ class "new-comment" , onSubmit (SaveComment photo.id) ] -- Message on submit
       [ input
         [ type_ "text" -- The underscore here is to avoid the `type` keyword
         , placeholder "Add a comment.."
-        , value model.newComment -- Lets the value reflect what is in the models newComment field
-        , onInput UpdateComment
+        , value photo.newComment -- Lets the value reflect what is in the models newComment field
+        , onInput (UpdateComment photo.id)
         ]
         []
-      , button [disabled (String.isEmpty model.newComment)] [ text "Save" ] -- Disable button IF newComment field of our model is empty
+      , button [disabled (String.isEmpty photo.newComment)] [ text "Save" ] -- Disable button IF newComment field of our model is empty
       ]
     ]
 
@@ -162,15 +167,35 @@ viewDetailedPhoto model =
 
 -- Helper function to see if we actually have a photo to display (as the type
 -- passed in is Maybe Photo instead of a Photo).
-viewFeed : Maybe Photo -> Html Msg
-viewFeed maybePhoto =
-  case maybePhoto of
-    Just photo ->
-      viewDetailedPhoto photo
+viewFeed : Maybe Feed -> Html Msg
+viewFeed maybeFeed =
+  case maybeFeed of
+    Just feed ->
+      div [] (List.map viewDetailedPhoto feed)
 
     Nothing ->
       div [ class "loading-feed" ]
           [ text "Loading feed..." ]
+
+errorMessage : Http.Error -> String
+errorMessage error =
+  case error of
+    Http.BadPayload _ _ ->
+      """Sorry, we couldn't process your feed at this time.
+         We're working on it!"""
+    _ ->
+      """Sorry, we couldn't load your feed. Please try again later"""
+
+-- Helper to display errors if they are present
+viewContent : Model -> Html Msg
+viewContent model =
+  case model.error of
+    Just error ->
+      div [ class "feed-error" ]
+          [ text (errorMessage error) ]
+
+    Nothing ->
+      viewFeed model.feed
 
 -- Views in Elm are functions that take a model and return a virtual DOM tree
 -- `div` and other HTML functions take two lists: attributes and child nodes.
@@ -181,7 +206,7 @@ view model =
       [ div [class "header"]
           [ h1 [] [ text "Picshare" ] ]
         , div [class "content-flow"]
-          [ viewFeed model.photo
+          [ viewContent model
           ]
       ]
 
@@ -193,10 +218,10 @@ type then uses the Http.Error type for the `error` variable and Photo for the `v
 type variable.
 -}
 type Msg
-  = ToggleLike
-  | UpdateComment String
-  | SaveComment
-  | LoadFeed (Result Http.Error Photo)
+  = ToggleLike Id
+  | UpdateComment Id String
+  | SaveComment Id
+  | LoadFeed (Result Http.Error Feed)
 
 -- Helper function used in our `update` function to save a new comment in our model
 saveNewComment : Photo -> Photo
@@ -221,15 +246,31 @@ updateComment : String -> Photo -> Photo
 updateComment comment photo =
   { photo | newComment = comment }
 
+-- Helper to update photo by given ID.
+-- Maps over the feed with List.map, passing in an anonymous mapping function to
+-- inspect each photos id. If that photo id matches the id argument, we apply
+-- updatePhoto to the matching photo and return the transformed photo. Otherwise,
+-- we return the photo with no change.
+updatePhotoById : (Photo -> Photo) -> Id -> Feed -> Feed
+updatePhotoById updatePhoto id feed =
+  List.map
+  (\photo ->
+    if photo.id == id then
+      updatePhoto photo
+    else
+      photo
+    )
+    feed
+
 {- Maybe.map transforms whatever could be inside a Maybe type. It takes a
 transformation function as the first argument and then Maybe value as the second
 argument. If the Maybe value is a Just, then Maybe.map will create a new Just
 with the transformation function applied to the inner Just value. If the Maybe
 is Nothing, then Maybe.map will return back Nothing.
 -}
-updateFeed : (Photo -> Photo) -> Maybe Photo -> Maybe Photo
-updateFeed updatePhoto maybePhoto =
-  Maybe.map updatePhoto maybePhoto
+updateFeed : (Photo -> Photo) -> Id -> Maybe Feed -> Maybe Feed
+updateFeed updatePhoto id maybeFeed =
+  Maybe.map (updatePhotoById updatePhoto id) maybeFeed
 
 -- All changes to the model in Elm has to happen in an `update` function.
 -- When we use Html.program, the update function needs to return a tuple just like
@@ -247,33 +288,33 @@ updateFeed updatePhoto maybePhoto =
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
   case msg of
-    ToggleLike ->
+    ToggleLike id ->
       ( { model
-          | photo = updateFeed toggleLike model.photo
+          | feed = updateFeed toggleLike id model.feed
         } -- Toggle to the opposite on update
       , Cmd.none
       )
 
-    UpdateComment comment ->
+    UpdateComment id comment ->
       ( { model
-          | photo = updateFeed (updateComment comment) model.photo
+          | feed = updateFeed (updateComment comment) id model.feed
         }
       , Cmd.none
       )
 
-    SaveComment ->
+    SaveComment id ->
       ( { model
-          | photo = updateFeed saveNewComment model.photo
+          | feed = updateFeed saveNewComment id model.feed
         }, Cmd.none
       )
 
-    LoadFeed (Ok photo) ->
-      ( { model | photo = Just photo }
+    LoadFeed (Ok feed) ->
+      ( { model | feed = Just feed }
         , Cmd.none
         )
 
-    LoadFeed (Err _) ->
-      ( model, Cmd.none )
+    LoadFeed (Err error) ->
+      ( { model | error = Just error }, Cmd.none )
 
 {- This subscriptions doesn't really do anything now, but we need this no-op
 implementation for now to create the correct type of record that Html.program
