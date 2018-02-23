@@ -18,24 +18,37 @@ baseUrl : String
 baseUrl =
   "https://programming-elm.com/"
 
-viewDetailedPhoto : String -> String -> Html msg
-viewDetailedPhoto url caption =
+-- Our initialModel is a Record (very much like JS objects).
+-- initialModel is a common pattern in Elm apps to define the initial state.
+initialModel : { url : String, caption : String }
+initialModel =
+  { url = baseUrl ++ "1.jpg"
+  , caption = "Surfing"
+  }
+
+-- Views in Elm are functions that take a model and return a virtual DOM tree
+
+viewDetailedPhoto : { url : String, caption : String } -> Html msg
+viewDetailedPhoto model =
   div [ class "detailed-photo" ]
-      [ img [src url] []
+      [ img [src model.url] []
       , div [ class "photo-info" ]
-        [ h2 [ class "caption" ] [ text caption ] ]
+        [ h2 [ class "caption" ] [ text model.caption ] ]
       ]
 
 -- `div` and other HTML functions take two lists: attributes and child nodes.
 -- `main` can only have one root element, so we need to wrap it to a div here.
-main : Html msg
-main =
+view : { url : String, caption : String } -> Html msg
+view model =
   div []
       [ div [class "header"]
           [ h1 [] [ text "Picshare" ] ]
         , div [class "content-flow"]
-          [ viewDetailedPhoto (baseUrl ++ "1.jpg") "Surfing"
-          , viewDetailedPhoto (baseUrl ++ "2.jpg") "The fox"
-          , viewDetailedPhoto (baseUrl ++ "3.jpg") "Evening"
+          [ viewDetailedPhoto model
           ]
       ]
+
+-- Main ties the model and view together by passing in initialModel to the view function.
+main : Html msg
+main =
+  view initialModel

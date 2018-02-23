@@ -15,8 +15,8 @@ Other features of Elm include:
 - Strong static typing, ensuring there are no silly type coercion bugs
 - Custom types & pattern matching, allows you to model problems clearly
 - Advanced tooling, such as the `time travel debugger`
-- Built in framework, known as the `Elm architecture` (which inspired Redux)
-- **Crazy great error messages**, the compiler is the most helpful buddy ever
+- Built in framework, known as the `Elm architecture` (aka. Model-View-Update pattern)
+- **Great error messages**, the compiler is the most helpful buddy ever
 
 ## Who uses Elm?
 
@@ -26,7 +26,7 @@ A quick look at the users of Elm includes names like Pivotal (the tracker & othe
 
 ## Drawbacks of Elm
 
-- Writing HTML as functions feels painful
+- Writing long HTML as functions feels painful, but feels nicer when it is separated to functions
 - Largely a one-man-show with a BDFL (Benevolent dictator for life). Keeps things consistent but also locks the language up
 - JSON parsing, a very common task in everyday web apps, is quite annoying
 - Small community and package ecosystem, slow development cycles

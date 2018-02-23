@@ -8145,57 +8145,55 @@ var _elm_lang$html$Html_Attributes$classList = function (list) {
 };
 var _elm_lang$html$Html_Attributes$style = _elm_lang$virtual_dom$VirtualDom$style;
 
-var _user$project$Picshare$viewDetailedPhoto = F2(
-	function (url, caption) {
-		return A2(
-			_elm_lang$html$Html$div,
-			{
-				ctor: '::',
-				_0: _elm_lang$html$Html_Attributes$class('detailed-photo'),
-				_1: {ctor: '[]'}
-			},
-			{
+var _user$project$Picshare$viewDetailedPhoto = function (model) {
+	return A2(
+		_elm_lang$html$Html$div,
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html_Attributes$class('detailed-photo'),
+			_1: {ctor: '[]'}
+		},
+		{
+			ctor: '::',
+			_0: A2(
+				_elm_lang$html$Html$img,
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html_Attributes$src(model.url),
+					_1: {ctor: '[]'}
+				},
+				{ctor: '[]'}),
+			_1: {
 				ctor: '::',
 				_0: A2(
-					_elm_lang$html$Html$img,
+					_elm_lang$html$Html$div,
 					{
 						ctor: '::',
-						_0: _elm_lang$html$Html_Attributes$src(url),
+						_0: _elm_lang$html$Html_Attributes$class('photo-info'),
 						_1: {ctor: '[]'}
 					},
-					{ctor: '[]'}),
-				_1: {
-					ctor: '::',
-					_0: A2(
-						_elm_lang$html$Html$div,
-						{
-							ctor: '::',
-							_0: _elm_lang$html$Html_Attributes$class('photo-info'),
-							_1: {ctor: '[]'}
-						},
-						{
-							ctor: '::',
-							_0: A2(
-								_elm_lang$html$Html$h2,
-								{
-									ctor: '::',
-									_0: _elm_lang$html$Html_Attributes$class('caption'),
-									_1: {ctor: '[]'}
-								},
-								{
-									ctor: '::',
-									_0: _elm_lang$html$Html$text(caption),
-									_1: {ctor: '[]'}
-								}),
-							_1: {ctor: '[]'}
-						}),
-					_1: {ctor: '[]'}
-				}
-			});
-	});
-var _user$project$Picshare$baseUrl = 'https://programming-elm.com/';
-var _user$project$Picshare$main = _elm_lang$virtual_dom$Native_VirtualDom.staticProgram(
-	A2(
+					{
+						ctor: '::',
+						_0: A2(
+							_elm_lang$html$Html$h2,
+							{
+								ctor: '::',
+								_0: _elm_lang$html$Html_Attributes$class('caption'),
+								_1: {ctor: '[]'}
+							},
+							{
+								ctor: '::',
+								_0: _elm_lang$html$Html$text(model.caption),
+								_1: {ctor: '[]'}
+							}),
+						_1: {ctor: '[]'}
+					}),
+				_1: {ctor: '[]'}
+			}
+		});
+};
+var _user$project$Picshare$view = function (model) {
+	return A2(
 		_elm_lang$html$Html$div,
 		{ctor: '[]'},
 		{
@@ -8230,29 +8228,20 @@ var _user$project$Picshare$main = _elm_lang$virtual_dom$Native_VirtualDom.static
 					},
 					{
 						ctor: '::',
-						_0: A2(
-							_user$project$Picshare$viewDetailedPhoto,
-							A2(_elm_lang$core$Basics_ops['++'], _user$project$Picshare$baseUrl, '1.jpg'),
-							'Surfing'),
-						_1: {
-							ctor: '::',
-							_0: A2(
-								_user$project$Picshare$viewDetailedPhoto,
-								A2(_elm_lang$core$Basics_ops['++'], _user$project$Picshare$baseUrl, '2.jpg'),
-								'The fox'),
-							_1: {
-								ctor: '::',
-								_0: A2(
-									_user$project$Picshare$viewDetailedPhoto,
-									A2(_elm_lang$core$Basics_ops['++'], _user$project$Picshare$baseUrl, '3.jpg'),
-									'Evening'),
-								_1: {ctor: '[]'}
-							}
-						}
+						_0: _user$project$Picshare$viewDetailedPhoto(model),
+						_1: {ctor: '[]'}
 					}),
 				_1: {ctor: '[]'}
 			}
-		}));
+		});
+};
+var _user$project$Picshare$baseUrl = 'https://programming-elm.com/';
+var _user$project$Picshare$initialModel = {
+	url: A2(_elm_lang$core$Basics_ops['++'], _user$project$Picshare$baseUrl, '1.jpg'),
+	caption: 'Surfing'
+};
+var _user$project$Picshare$main = _elm_lang$virtual_dom$Native_VirtualDom.staticProgram(
+	_user$project$Picshare$view(_user$project$Picshare$initialModel));
 
 var Elm = {};
 Elm['Picshare'] = Elm['Picshare'] || {};
