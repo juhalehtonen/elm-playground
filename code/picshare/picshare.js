@@ -8279,6 +8279,10 @@ var _user$project$Picshare$initialModel = {
 	caption: 'Stealing from Unsplash',
 	liked: false
 };
+var _user$project$Picshare$Model = F3(
+	function (a, b, c) {
+		return {url: a, caption: b, liked: c};
+	});
 var _user$project$Picshare$Unlike = {ctor: 'Unlike'};
 var _user$project$Picshare$Like = {ctor: 'Like'};
 var _user$project$Picshare$viewDetailedPhoto = function (model) {

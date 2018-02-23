@@ -15,6 +15,16 @@ import Html exposing (..)
 import Html.Attributes exposing (class, src)
 import Html.Events exposing (onClick)
 
+-- Type aliases allow us to associate a type name with another type. One common
+-- example would be `type alias Id = Int` to call Integers Ids. Here we are
+-- creating a type alias for our applications record model. This saves us from
+-- having to repeat { url : String, caption : String, liked : Bool } everywhere.
+type alias Model =
+  { url : String
+  , caption : String
+  , liked : Bool
+  }
+
 -- Return a base URL for our photos
 baseUrl : String
 baseUrl =
@@ -22,7 +32,7 @@ baseUrl =
 
 -- Our initialModel is a Record (very much like JS objects).
 -- initialModel is a common pattern in Elm apps to define the initial state.
-initialModel : { url : String, caption : String, liked : Bool }
+initialModel : Model
 initialModel =
   { url = baseUrl ++ "800/600"
   , caption = "Stealing from Unsplash"
@@ -31,7 +41,7 @@ initialModel =
 
 
 -- Create a single photo html representation from a model
-viewDetailedPhoto : { url : String, caption : String, liked: Bool } -> Html Msg
+viewDetailedPhoto : Model -> Html Msg
 viewDetailedPhoto model =
   let
     buttonClass =
@@ -64,7 +74,7 @@ viewDetailedPhoto model =
 -- Views in Elm are functions that take a model and return a virtual DOM tree
 -- `div` and other HTML functions take two lists: attributes and child nodes.
 -- `main` can only have one root element, so we need to wrap it to a div here.
-view : { url : String, caption : String, liked : Bool } -> Html Msg
+view : Model -> Html Msg
 view model =
   div []
       [ div [class "header"]
@@ -86,10 +96,7 @@ type Msg
 -- are immutable, the update function must return a new model.
 -- Our update function takes in a Msg (as defined above) and a record model,
 -- and returns a model based on what the pattern matches to.
-update :
-  Msg
-  -> { url : String, caption : String, liked : Bool }
-  -> { url : String, caption : String, liked : Bool }
+update : Msg -> Model -> Model
 update msg model =
   case msg of
     Like ->
@@ -106,7 +113,7 @@ update msg model =
 -- the rest for us.
 -- Here the `Never` means that the type variable `flags` for the Program type never takes any values.
 -- The other two things we pass is the model and the msg.
-main : Program Never { url : String, caption : String, liked : Bool } Msg
+main : Program Never Model Msg
 main =
   Html.beginnerProgram
     { model = initialModel
