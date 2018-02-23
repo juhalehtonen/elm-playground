@@ -16,6 +16,7 @@ Other features of Elm include:
 - Custom types & pattern matching, allows you to model problems clearly
 - Advanced tooling, such as the `time travel debugger`
 - Built in framework, known as the `Elm architecture` (which inspired Redux)
+- **Crazy great error messages**, the compiler is the most helpful buddy ever
 
 ## Who uses Elm?
 
