@@ -13,32 +13,58 @@ import Html exposing (..)
 -- The Html.Attributes module contains functions for adding attributes to virtual
 -- DOM nodes.
 import Html.Attributes exposing (class, src)
+import Html.Events exposing (onClick)
 
+-- Return a base URL for our photos
 baseUrl : String
 baseUrl =
-  "https://programming-elm.com/"
+  "https://unsplash.it/"
 
 -- Our initialModel is a Record (very much like JS objects).
 -- initialModel is a common pattern in Elm apps to define the initial state.
-initialModel : { url : String, caption : String }
+initialModel : { url : String, caption : String, liked : Bool }
 initialModel =
-  { url = baseUrl ++ "1.jpg"
-  , caption = "Surfing"
+  { url = baseUrl ++ "800/600"
+  , caption = "Stealing from Unsplash"
+  , liked = False
   }
 
--- Views in Elm are functions that take a model and return a virtual DOM tree
 
-viewDetailedPhoto : { url : String, caption : String } -> Html msg
+-- Create a single photo html representation from a model
+viewDetailedPhoto : { url : String, caption : String, liked: Bool } -> Html Msg
 viewDetailedPhoto model =
+  let
+    buttonClass =
+      if model.liked then
+        "fa-heart"
+      else
+        "fa-heart-o"
+
+    msg =
+      if model.liked then
+        Unlike
+      else
+        Like
+  in
   div [ class "detailed-photo" ]
       [ img [src model.url] []
       , div [ class "photo-info" ]
-        [ h2 [ class "caption" ] [ text model.caption ] ]
+        [ div [ class "like-button" ]
+          [ i
+            [ class "fa fa-2x"
+            , class buttonClass
+            , onClick msg
+            ]
+            []
+          ]
+        , h2 [ class "caption" ] [ text model.caption ]
+        ]
       ]
 
+-- Views in Elm are functions that take a model and return a virtual DOM tree
 -- `div` and other HTML functions take two lists: attributes and child nodes.
 -- `main` can only have one root element, so we need to wrap it to a div here.
-view : { url : String, caption : String } -> Html msg
+view : { url : String, caption : String, liked : Bool } -> Html Msg
 view model =
   div []
       [ div [class "header"]
@@ -48,7 +74,42 @@ view model =
           ]
       ]
 
--- Main ties the model and view together by passing in initialModel to the view function.
-main : Html msg
+-- Create our own union type that we can use for our Msg
+type Msg
+  = Like
+  | Unlike
+
+-- All changes to the model in Elm has to happen in an `update` function.
+-- The update function takes two arguments, a `message` and a `model`.
+-- The message comes from Elm's runtime in response to events such as clicks.
+-- The message describes the type of state change. Because data types in Elm
+-- are immutable, the update function must return a new model.
+-- Our update function takes in a Msg (as defined above) and a record model,
+-- and returns a model based on what the pattern matches to.
+update :
+  Msg
+  -> { url : String, caption : String, liked : Bool }
+  -> { url : String, caption : String, liked : Bool }
+update msg model =
+  case msg of
+    Like ->
+      { model | liked = True } -- each branch is an expression in Elm, so no need for `break`
+
+    Unlike ->
+      { model | liked = False } -- no need for default branch in Elm, as we know possible matches
+
+-- A `program` in Elm ties together the model, view function and update function.
+-- This is how Elm is able to subscribe to DOM events, dispatch messages to our
+-- update function, update our state based on the result of our update function,
+-- and display the changes in the browser.
+-- Here we pass model, view and update to the beginnerProgram that takes care of
+-- the rest for us.
+-- Here the `Never` means that the type variable `flags` for the Program type never takes any values.
+-- The other two things we pass is the model and the msg.
+main : Program Never { url : String, caption : String, liked : Bool } Msg
 main =
-  view initialModel
+  Html.beginnerProgram
+    { model = initialModel
+    , view = view
+    , update = update
+    }
