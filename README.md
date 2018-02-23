@@ -4,7 +4,7 @@ This repo contains code and notes from my February 2018 learning day about [Elm]
 
 ## The picshare app
 
-The end product of this quick dive into Elm is a small web application that fetches JSON data via an API. Sounds simple, but there's a surprising depth to it in the Elm world! Check out [Picshare.elm](Picshare.elm) for the source code (and comments on why things are done the way they are done), and visit [https://juhalehtonen.github.io/elm-playground/](https://juhalehtonen.github.io/elm-playground/) to see the thing in action. It was compiled with the `--debug` flag to enable time travel debugging (check it out too).
+The end product of this quick dive into Elm is a small web application that fetches JSON data via an API, and also further fetches updates via a WebSocket connection using Elm Subscriptions. Sounds simple, but there's a surprising depth to it in the Elm world! Check out [Picshare.elm](Picshare.elm) for the source code (and comments on why things are done the way they are done), and visit [https://juhalehtonen.github.io/elm-playground/](https://juhalehtonen.github.io/elm-playground/) to see the thing in action. It was compiled with the `--debug` flag to enable time travel debugging (check it out too).
 
 The main application code resides in the root here to create a GitHub Pages site from the Master branch. Other small scale tests are in `code/`.
 
