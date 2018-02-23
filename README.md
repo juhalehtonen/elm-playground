@@ -26,6 +26,7 @@ A quick look at the users of Elm includes names like Pivotal (the tracker & othe
 
 ## Drawbacks of Elm
 
+- Writing HTML as functions feels painful
 - Largely a one-man-show with a BDFL (Benevolent dictator for life). Keeps things consistent but also locks the language up
 - JSON parsing, a very common task in everyday web apps, is quite annoying
 - Small community and package ecosystem, slow development cycles
