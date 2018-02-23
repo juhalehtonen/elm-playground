@@ -283,3 +283,16 @@ ul {
     margin-top: 28px;
   }
 }
+
+
+.c-debug-awesome {
+  position: fixed;
+  right: 10px;
+  bottom: 60px;
+  max-width: 200px;
+  background: #fff;
+  padding: 15px;
+  border: 1px solid #dec34e;
+  font-size: 13px;
+  background: #fff4b6;
+}
